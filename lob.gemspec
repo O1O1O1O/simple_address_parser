@@ -5,7 +5,7 @@ require 'lob/version'
 
 Gem::Specification.new do |spec|
   spec.name          = "lob"
-  spec.version       = Test::VERSION
+  spec.version       = Lob::VERSION
   spec.authors       = ["Simon Waddington"]
   spec.email         = ["simon.waddington@gmail.com"]
 
@@ -26,8 +26,8 @@ Gem::Specification.new do |spec|
   spec.files         = `git ls-files -z`.split("\x0").reject do |f|
     f.match(%r{^(lob|spec|features)/})
   end
-  spec.bindir        = "exe"
-  spec.executables   = spec.files.grep(%r{^exe/}) { |f| File.basename(f) }
+  spec.bindir        = "bin"
+  spec.executables   = spec.files.grep(%r{^bin/}) { |f| File.basename(f) }
   spec.require_paths = ["lib"]
 
   spec.add_development_dependency "bundler", "~> 1.14"

@@ -7,6 +7,7 @@ require "lob/address_parser"
 # with your gem easier. You can also use a different console, if you like.
 
 parser = AddressParser.new
-STDIN.readlines do |line|
-  puts parser.parse_address(line)
+STDIN.each_line do |line|
+  puts parser.parse_address(line).inspect
+  STDOUT.flush
 end

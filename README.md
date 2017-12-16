@@ -1,8 +1,29 @@
-# Test
+# Address parser
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/test`. To experiment with that code, run `bin/console` for an interactive prompt.
+This gem is for parsing postal address strings into commponent parts.
 
-TODO: Delete this and the text above, and describe your gem
+## Accepted input
+
+*Assumptions*
+- Address is in the US with a elements `<LINE1> [<LINE2>] <CITY> <STATE> <ZIP>`
+- No address components are validated against actual valid cities, states or zip codes
+- `LINE1` is present and ends with a suffix which is one of `Ave`, `St`, or `Plaza` and defined in `AddressParser::LINE1_SUFFIXES`
+- `LINE2` is optional but if present ends in one or more digits
+- `CITY`, `STATE`, and `ZIP` are present
+- No error handling for invalid inputs
+
+### `LINE1`
+Address line 1 eg. "185 View St" which must end in an accepted street name suffix as defined by `AddressParser::LINE1_SUFFIXES`
+### `LINE2`
+Optional address suffix must end in one or more digits
+### `CITY`
+City name.  Not validated against US cities so any text between the state and LINE1 or LINE2 address components
+### `STATE`
+Two letter state abbreviation (not validated)
+
+### `ZIP`
+5 digit or 5+4 zip code e.g. 94106 or 94106-2314
+Not validated against valid US zip codes
 
 ## Installation
 
@@ -22,18 +43,46 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+Require the gem with `require 'lob'`
 
-## Development
+The gem includes a single class `AddressParser`.
 
-After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
+### Parse a single address
 
-To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and tags, and push the `.gem` file to [rubygems.org](https://rubygems.org).
+Parse a single address with `parse_address` method of an `AddressParser` instance passing the address as the single input parameter.  
 
-## Contributing
+The return value is a hash containing the keys `"line1"`, `"line2"`, `"city"`, `"state"`, `"zip"`.  If absent then the value of the `"line2"` key will be an empty string `""`.
+```ruby
+  parser = AddressParser.new
+  parser.parse_address('185 Noname St Apt 341 Oakland CA 94607')
+  => {"line1"=>"185 Noname St", "line2"=>"Apt 341", "city"=>"Oakland", "state"=>"CA", "zip"=>"94607"}
+```
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/test. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [Contributor Covenant](http://contributor-covenant.org) code of conduct.
+### Parse multiple addresses
 
+Parse multiple addresses with `parse_addresss` method of an `AddressParser` instance pasing an array of address strings as the single input parameter.
+
+The return value is an array of address hashes as above.
+
+```ruby
+  parser = AddressParser.new
+  parser.parse_addresses(
+    ['185 Noname St Apt 341 Oakland CA 94607',
+     '1451 Somewhere Ave Alameda CA 94501'])
+  => [{"line1"=>"185 Noname St", "line2"=>"Apt 341", "city"=>"Oakland", "state"=>"CA", "zip"=>"94607"},{"1451 Somewhere Ave", "line2"=>"", "city"=>"Alameda", "zip"=>"94501"}]
+```
+
+### Commandline
+
+A commandline API is available from `bin/address_parser` which reads lines from standard input and outputs parsed address hashes one by one
+
+```bash
+bin/address_parser 
+185 Noname St Apt 341 Oakland CA 94607
+{"line1"=>"185 Noname St", "line2"=>"Apt 341", "city"=>"Oakland", "state"=>"CA", "zip"=>"94607"}
+1451 Somewhere Ave Alameda CA 94501
+{"line1"=>"1451 Somewhere Ave", "line2"=>"", "city"=>"Alameda", "state"=>"CA", "zip"=>"94501"}
+```
 
 ## License
 

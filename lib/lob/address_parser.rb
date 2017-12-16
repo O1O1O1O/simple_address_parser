@@ -15,11 +15,11 @@ class AddressParser
     city = remainder
 
     {
-      "line1": line_1,
-      "line2": line_2,
-      "city": city,
-      "state": state,
-      "zip": zip
+      "line1" => line_1,
+      "line2" => line_2,
+      "city" => city,
+      "state" => state,
+      "zip" => zip
     }
   end
 
