@@ -5,7 +5,7 @@ require 'lob/version'
 
 Gem::Specification.new do |spec|
   spec.name          = "lob"
-  spec.version       = Test::VERSION
+  spec.version       = Lob::VERSION
   spec.authors       = ["Simon Waddington"]
   spec.email         = ["simon.waddington@gmail.com"]
 
