@@ -17,7 +17,7 @@ describe AddressParser do
 
     context "when city name contains a street suffix" do
       # Came up with this test that is not trivial to fix:
-      
+
       #it "parses line 1" do
       #  expect(subject.parse_line1("185 Berry St Suite 6600 Plaza City CA 94107")).to eq(["185 Berry St", "Suite 6600 Plaza City CA 94107"])
       #end
