@@ -8,30 +8,37 @@ class AddressParser
   end
 
   def parse_address(text)
-    line_1, remainder = *parse_line1(text)
-    line_2, remainder = *parse_line2(remainder)
-    zip, remainder = *parse_zip(remainder)
-    state, remainder = *parse_state(remainder)
-    city = remainder
+    #   /(.* \d+) (\D+)$/
+    # and if that doesn't match then the first case is parsed by
+    #  /(.* (Ave|St|Plaza)) (.+))$/
+    #
+    # So we need to update the parsing sequence to...
+    zip, remainder = parse_zip(text)
+    state, remainder = parse_state(remainder)
+    city, remainder = parse_city(remainder)
+    line2, remainder = parse_line2(remainder)
+    line1 = remainder
 
     {
-      "line1" => line_1,
-      "line2" => line_2,
+      "line1" => line1,
+      "line2" => line2,
       "city" => city,
       "state" => state,
       "zip" => zip
     }
   end
 
-  def parse_line1(text)
+  # Given line1 [line2] city return [city, remainder]
+  def parse_city(text)
     suffixes = LINE1_SUFFIXES.join('|')
-    result = text.match(/(.* (#{suffixes})) (.*)$/)
-    [result[1], result[3]]
+    result = text.match(/^(.* (#{suffixes}|\D+ \d+)) ((?!#{suffixes}).*)$/)
+    [result[3], result[1]]
   end
 
   def parse_line2(text)
-    result = text.match(/(\D+ \d+) (.*)/)
-    result ? [result[1], result[2]] : ['', text]
+    suffixes = LINE1_SUFFIXES.join('|')
+    result = text.match(/^(.* (#{suffixes})) (\D+ \d+)$/)
+    result ? [result[3], result[1]] : ['', text]
   end
 
   def parse_zip(text)

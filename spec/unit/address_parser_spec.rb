@@ -4,21 +4,63 @@ describe AddressParser do
     described_class.new
   }
 
-  describe '#parse_line1' do
-    it "parses line 1" do
-      expect(subject.parse_line1("185 Berry St Suite 6600 San Francisco CA 94107")).to eq(["185 Berry St", "Suite 6600 San Francisco CA 94107"])
+  describe '#parse_line2' do
+    context "when line2 is present" do
+      it "parses line 2" do
+        expect(subject.parse_line2("779 Francis Ave Apt 42")).to eq(["Apt 42", "779 Francis Ave"])
+      end
     end
 
-    context "when stret name contains a street suffix" do
-      it "parses line 1 " do
-        expect(subject.parse_line1("779 St Francis Ave Novato CA 94947")).to eq(["779 St Francis Ave", "Novato CA 94947"])
+    context "when line2 is not present" do
+      it "parses line 2" do
+        expect(subject.parse_line2("779 Francis Ave")).to eq(["", "779 Francis Ave"])
+      end
+    end
+
+    context "when street name contains a street suffix" do
+      context "when line2 is present" do
+        it "parses line 2" do
+          expect(subject.parse_line2("779 St Francis Ave Apt 42")).to eq(["Apt 42", "779 St Francis Ave"])
+        end
+      end
+
+      context "when line2 is not present" do
+        it "parses line 2" do
+          expect(subject.parse_line2("779 St Francis Ave")).to eq(["", "779 St Francis Ave"])
+        end
       end
     end
   end
 
-  describe '#parse_line2' do
-    it "parsing line 2 returns the correct result" do
-      expect(subject.parse_line2("Suite 6600 San Francisco CA 94107")).to eq(["Suite 6600", "San Francisco CA 94107"])
+  describe "#parse_city" do
+    context "when line2 is not present" do
+      it "parses city" do
+        expect(subject.parse_city("185 Berry St Daly City")).to eq(["Daly City", "185 Berry St"])
+      end
+
+      context "when city name contains a street suffix" do
+        it "parses city" do
+          expect(subject.parse_city("185 Berry St Plaza City")).to eq(["Plaza City", "185 Berry St"])
+        end
+      end
+    end
+
+    context "when line2 is present" do
+      it "parses city" do
+        expect(subject.parse_city("185 Berry St Suite 6600 Daly City")).to eq(["Daly City", "185 Berry St Suite 6600"])
+      end
+
+      context "when city name contains a street suffix" do
+        it "parses city" do
+          expect(subject.parse_city("185 Berry St Suite 6600 Plaza City")).to eq(["Plaza City", "185 Berry St Suite 6600"])
+        end
+      end
+    end
+
+    context "when line1 starts with a suffix" do
+      it "parses city" do
+        expect(subject.parse_city("185 St Francis St Daly City")).to eq(["Daly City", "185 St Francis St"])
+      end
     end
   end
 
